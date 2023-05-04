@@ -1,15 +1,12 @@
-import PokemonList from './components/PokemonList'
-import SearchBox from './components/SearchBox'
-import { PokemonProvider } from './store'
+import PokemonList from "./components/PokemonList";
+import SearchBox from "./components/SearchBox";
 
 function App() {
   return (
-    <PokemonProvider>
-      <div className='mx-auto max-w-2xl'>
-        <SearchBox />
-        <PokemonList />
-      </div>
-    </PokemonProvider>
-  )
+    <div className="mx-auto max-w-2xl">
+      <SearchBox />
+      <PokemonList />
+    </div>
+  );
 }
-export default App
+export default App;
