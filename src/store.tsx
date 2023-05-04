@@ -1,4 +1,5 @@
-import { useEffect, createContext, useReducer, useMemo, useCallback } from 'react'
+import { createContext, useReducer, useMemo, useCallback } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
 interface Pokemon {
   id: number
@@ -14,40 +15,31 @@ interface Pokemon {
 
 function usePokemonSource(): { pokemon: Pokemon[], search: string, setSearch: (search: string) => void } {
   type PokemonState = {
-    pokemon: Pokemon[],
     search: string
   }
 
   type PokemonAction = {
-    type: "SET_POKEMON",
-    payload: Pokemon[]
-  } | {
     type: "SET_SEARCH",
     payload: string
   }
+
+  const {data: pokemon } = useQuery<Pokemon[]>(['pokemon'], async () => {
+    const response = await fetch("pokemon.json")
+    return response.json()
+    },
+    {
+      initialData: [],
+    }
+  )
   
-  const [{ pokemon, search }, dispatch] = useReducer((state: PokemonState, action: PokemonAction) => {
+  const [{ search }, dispatch] = useReducer((state: PokemonState, action: PokemonAction) => {
     switch (action.type) {
-        case "SET_POKEMON":
-          return { ...state, pokemon: action.payload };
         case "SET_SEARCH":
           return { ...state, search: action.payload };
       }
   }, {
-    pokemon: [],
     search: ""
   })
-
-  useEffect(() => {
-    fetch("pokemon.json")
-      .then(res => res.json())
-      .then(data => {
-        dispatch({
-          type: "SET_POKEMON",
-          payload: data
-        })
-      })
-  }, [])
   
   // use useCallback in custom hooks when returning functions
   const setSearch = useCallback((search: string) => {
